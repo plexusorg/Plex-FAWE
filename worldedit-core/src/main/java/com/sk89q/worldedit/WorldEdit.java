@@ -52,9 +52,6 @@ import com.sk89q.worldedit.internal.expression.Expression;
 import com.sk89q.worldedit.internal.expression.invoke.ReturnException;
 import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.scripting.CraftScriptContext;
-import com.sk89q.worldedit.scripting.CraftScriptEngine;
-import com.sk89q.worldedit.scripting.RhinoCraftScriptEngine;
 import com.sk89q.worldedit.session.SessionManager;
 import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldedit.util.Location;
@@ -743,97 +740,6 @@ public final class WorldEdit {
         BlockInteractEvent event = new BlockInteractEvent(player, clicked, face, HIT);
         getEventBus().post(event);
         return event.isCancelled();
-    }
-
-    /**
-     * Executes a WorldEdit script.
-     *
-     * @param player the player
-     * @param f      the script file to execute
-     * @param args   arguments for the script
-     * @throws WorldEditException if something goes wrong
-     */
-    public void runScript(Player player, File f, String[] args) throws WorldEditException {
-        String filename = f.getPath();
-        int index = filename.lastIndexOf('.');
-        String ext = filename.substring(index + 1);
-
-        if (!ext.equalsIgnoreCase("js")) {
-            player.print(Caption.of("worldedit.script.unsupported"));
-            return;
-        }
-
-        String script;
-
-        try {
-            InputStream file;
-
-            if (!f.exists()) {
-                file = WorldEdit.class.getResourceAsStream("craftscripts/" + filename);
-
-                if (file == null) {
-                    player.print(Caption.of("worldedit.script.file-not-found", TextComponent.of(filename)));
-                    return;
-                }
-            } else {
-                file = new FileInputStream(f);
-            }
-
-            DataInputStream in = new DataInputStream(file);
-            byte[] data = new byte[in.available()];
-            in.readFully(data);
-            in.close();
-            script = new String(data, 0, data.length, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            player.print(Caption.of("worldedit.script.read-error", TextComponent.of(e.getMessage())));
-            return;
-        }
-
-        LocalSession session = getSessionManager().get(player);
-        CraftScriptContext scriptContext = new CraftScriptContext(
-                this,
-                getPlatformManager().queryCapability(Capability.USER_COMMANDS),
-                getConfiguration(),
-                session,
-                player,
-                args
-        );
-
-        CraftScriptEngine engine;
-
-        try {
-            engine = new RhinoCraftScriptEngine();
-        } catch (NoClassDefFoundError ignored) {
-            player.print(Caption.of("worldedit.script.no-script-engine"));
-            return;
-        }
-
-        engine.setTimeLimit(getConfiguration().scriptTimeout);
-
-        Map<String, Object> vars = new HashMap<>();
-        vars.put("argv", args);
-        vars.put("context", scriptContext);
-        vars.put("player", player);
-
-        try {
-            engine.evaluate(script, filename, vars);
-        } catch (ScriptException e) {
-            // non-exceptional return check
-            if (!(Throwables.getRootCause(e) instanceof ReturnException)) {
-                player.print(Caption.of("worldedit.script.failed", TextComponent.of(e.getMessage())));
-                logger.warn("Failed to execute script", e);
-            }
-        } catch (NumberFormatException | WorldEditException e) {
-            throw e;
-        } catch (Throwable e) {
-            player.print(Caption.of("worldedit.script.failed-console", TextComponent.of(e.getClass().getCanonicalName())));
-            logger.warn("Failed to execute script", e);
-        } finally {
-            for (EditSession editSession : scriptContext.getEditSessions()) {
-                editSession.close();
-                session.remember(editSession);
-            }
-        }
     }
 
     /**

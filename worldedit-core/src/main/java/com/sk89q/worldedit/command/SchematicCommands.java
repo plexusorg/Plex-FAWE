@@ -150,11 +150,11 @@ public class SchematicCommands {
     public void loadall(
             Actor actor, LocalSession session,
             @Arg(desc = "Format name.", def = "fast")
-                    String formatName,
+            String formatName,
             @Arg(desc = "File name.")
-                    String filename,
+            String filename,
             @Switch(name = 'o', desc = "Overwrite/replace existing clipboard(s)")
-                    boolean overwrite
+            boolean overwrite
 //            @Switch(name = 'r', desc = "Apply random rotation") <- not implemented below.
 //                    boolean randomRotate
     ) throws FilenameException {
@@ -196,7 +196,7 @@ public class SchematicCommands {
     public void unload(
             Actor actor, LocalSession session,
             @Arg(desc = "File name, requires extension.")
-                    String fileName
+            String fileName
     ) throws WorldEditException {
         URI uri;
         if (fileName.startsWith("file:/") || fileName.startsWith("http://") || fileName.startsWith("https://")) {
@@ -204,7 +204,9 @@ public class SchematicCommands {
         } else {
             final LocalConfiguration config = this.worldEdit.getConfiguration();
             File working = this.worldEdit.getWorkingDirectoryPath(config.saveDir).toFile();
-            File root = Settings.settings().PATHS.PER_PLAYER_SCHEMATICS ? new File(working, actor.getUniqueId().toString()) : working;
+            File root = Settings.settings().PATHS.PER_PLAYER_SCHEMATICS
+                    ? new File(working, actor.getUniqueId().toString())
+                    : working;
             uri = new File(root, fileName).toURI();
         }
 
@@ -304,6 +306,7 @@ public class SchematicCommands {
     }
     //FAWE end
 
+    // From Allink
     @Command(
             name = "load",
             desc = "Load a schematic into your clipboard"
@@ -312,9 +315,9 @@ public class SchematicCommands {
     public void load(
             Actor actor, LocalSession session,
             @Arg(desc = "File name.")
-                    String filename,
+            String filename,
             @Arg(desc = "Format name.", def = "fast")
-                    String formatName
+            String formatName
     ) throws FilenameException {
         LocalConfiguration config = worldEdit.getConfiguration();
 
@@ -323,83 +326,69 @@ public class SchematicCommands {
         InputStream in = null;
         try {
             URI uri;
-            if (formatName.startsWith("url:")) {
-                String t = filename;
-                filename = formatName;
-                formatName = t;
-            }
-            if (filename.startsWith("url:")) {
-                if (!actor.hasPermission("worldedit.schematic.load.web")) {
-                    actor.print(Caption.of("fawe.error.no-perm", "worldedit.schematic.load.web"));
+
+            File saveDir = worldEdit.getWorkingDirectoryPath(config.saveDir).toFile();
+            File dir = Settings.settings().PATHS.PER_PLAYER_SCHEMATICS
+                    ? new File(saveDir, actor.getUniqueId().toString())
+                    : saveDir;
+            File file;
+            if (filename.startsWith("#")) {
+                format = ClipboardFormats.findByAlias(formatName);
+                String[] extensions;
+                if (format != null) {
+                    extensions = format.getFileExtensions().toArray(new String[0]);
+                } else {
+                    extensions = ClipboardFormats.getFileExtensionArray();
+                }
+                file = actor.openFileOpenDialog(extensions);
+                if (file == null || !file.exists()) {
+                    actor.print(Caption.of("worldedit.schematic.load.does-not-exist", TextComponent.of(filename)));
                     return;
                 }
-                UUID uuid = UUID.fromString(filename.substring(4));
-                URL webUrl = new URL(Settings.settings().WEB.URL);
-                format = ClipboardFormats.findByAlias(formatName);
-                URL url = new URL(webUrl, "uploads/" + uuid + "." + format.getPrimaryFileExtension());
-                ReadableByteChannel byteChannel = Channels.newChannel(url.openStream());
-                in = Channels.newInputStream(byteChannel);
-                uri = url.toURI();
             } else {
-                File saveDir = worldEdit.getWorkingDirectoryPath(config.saveDir).toFile();
-                File dir = Settings.settings().PATHS.PER_PLAYER_SCHEMATICS ? new File(saveDir, actor.getUniqueId().toString()) : saveDir;
-                File file;
-                if (filename.startsWith("#")) {
-                    format = ClipboardFormats.findByAlias(formatName);
-                    String[] extensions;
-                    if (format != null) {
-                        extensions = format.getFileExtensions().toArray(new String[0]);
-                    } else {
-                        extensions = ClipboardFormats.getFileExtensionArray();
-                    }
-                    file = actor.openFileOpenDialog(extensions);
-                    if (file == null || !file.exists()) {
-                        actor.print(Caption.of("worldedit.schematic.load.does-not-exist", TextComponent.of(filename)));
-                        return;
-                    }
+                if (Settings.settings().PATHS.PER_PLAYER_SCHEMATICS && !actor.hasPermission("worldedit.schematic.load.other") && Pattern
+                        .compile("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+                        .matcher(filename)
+                        .find()) {
+                    actor.print(Caption.of("fawe.error.no-perm", "worldedit.schematic.load.other"));
+                    return;
+                }
+                if (filename.matches(".*\\.[\\w].*")) {
+                    format = ClipboardFormats
+                            .findByExtension(filename.substring(filename.lastIndexOf('.') + 1));
                 } else {
-                    if (Settings.settings().PATHS.PER_PLAYER_SCHEMATICS && !actor.hasPermission("worldedit.schematic.load.other") && Pattern
-                            .compile("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
-                            .matcher(filename)
-                            .find()) {
-                        actor.print(Caption.of("fawe.error.no-perm", "worldedit.schematic.load.other"));
-                        return;
-                    }
-                    if (filename.matches(".*\\.[\\w].*")) {
-                        format = ClipboardFormats
-                                .findByExtension(filename.substring(filename.lastIndexOf('.') + 1));
-                    } else {
-                        format = ClipboardFormats.findByAlias(formatName);
-                    }
+                    format = ClipboardFormats.findByAlias(formatName);
+                }
+                file = MainUtil.resolve(dir, filename, format, false);
+            }
+            if (file == null || !file.exists()) {
+                if (!filename.contains("../")) {
+                    dir = this.worldEdit.getWorkingDirectoryPath(config.saveDir).toFile();
                     file = MainUtil.resolve(dir, filename, format, false);
                 }
-                if (file == null || !file.exists()) {
-                    if (!filename.contains("../")) {
-                        dir = this.worldEdit.getWorkingDirectoryPath(config.saveDir).toFile();
-                        file = MainUtil.resolve(dir, filename, format, false);
-                    }
-                }
-                if (file == null || !file.exists() || !MainUtil.isInSubDirectory(saveDir, file)) {
-                    actor.printError(TextComponent.of("Schematic " + filename + " does not exist! (" + (file != null && file.exists()) +
-                            "|" + file + "|" + (file != null && !MainUtil
-                            .isInSubDirectory(saveDir, file)) + ")"));
+            }
+            if (file == null || !file.exists() || !MainUtil.isInSubDirectory(saveDir, file)) {
+                actor.printError(TextComponent.of("Schematic " + filename + " does not exist! (" + (file != null && file.exists()) +
+                        "|" + file + "|" + (file != null && !MainUtil
+                        .isInSubDirectory(saveDir, file)) + ")"));
+                return;
+            }
+            if (format == null) {
+                format = ClipboardFormats.findByFile(file);
+                if (format == null) {
+                    actor.print(Caption.of("worldedit.schematic.unknown-format", TextComponent.of(formatName)));
                     return;
                 }
-                if (format == null) {
-                    format = ClipboardFormats.findByFile(file);
-                    if (format == null) {
-                        actor.print(Caption.of("worldedit.schematic.unknown-format", TextComponent.of(formatName)));
-                        return;
-                    }
-                }
-                in = new FileInputStream(file);
-                uri = file.toURI();
             }
+
+            in = new FileInputStream(file);
+            uri = file.toURI();
+
             format.hold(actor, uri, in);
             actor.print(Caption.of("fawe.worldedit.schematic.schematic.loaded", filename));
         } catch (IllegalArgumentException e) {
             actor.print(Caption.of("worldedit.schematic.unknown-filename", TextComponent.of(filename)));
-        } catch (URISyntaxException | IOException e) {
+        } catch (IOException e) {
             actor.print(Caption.of("worldedit.schematic.file-not-exist", TextComponent.of(Objects.toString(e.getMessage()))));
             LOGGER.warn("Failed to load a saved clipboard", e);
         } finally {

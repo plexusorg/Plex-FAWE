@@ -77,6 +77,12 @@ public class NavigationCommands {
             @Arg(desc = "# of levels to ascend", def = "1")
                     int levels
     ) throws WorldEditException {
+        // From Allink
+        if (levels < 0) {
+            player.print(Caption.of("worldedit.ascend.obstructed"));
+            return;
+        }
+
         int ascentLevels = 0;
         while (player.ascendLevel()) {
             ++ascentLevels;
@@ -102,6 +108,12 @@ public class NavigationCommands {
             @Arg(desc = "# of levels to descend", def = "1")
                     int levels
     ) throws WorldEditException {
+        // From Allink
+        if (levels < 0) {
+            player.print(Caption.of("worldedit.descend.obstructed"));
+            return;
+        }
+
         int descentLevels = 0;
         while (player.descendLevel()) {
             ++descentLevels;

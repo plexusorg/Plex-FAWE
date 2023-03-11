@@ -24,6 +24,7 @@ import com.fastasyncworldedit.core.math.Vector3Impl;
 import com.fastasyncworldedit.core.util.MathMan;
 import com.google.common.collect.ComparisonChain;
 import com.sk89q.worldedit.math.transform.AffineTransform;
+import dev.plex.SanityChecks;
 
 import java.util.Comparator;
 
@@ -61,7 +62,10 @@ public abstract class Vector3 {
         }
         Fawe end
         */
-        return new Vector3Impl(x, y, z);
+        // From Allink
+        final double[] saneCoords = SanityChecks.getSane(x, y, z);
+
+        return new Vector3Impl(saneCoords[0], saneCoords[1], saneCoords[2]);
     }
 
     // thread-safe initialization idiom
