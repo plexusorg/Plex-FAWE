@@ -16,6 +16,12 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: temurin
+          cache: gradle
           java-version: 17
       - name: Build on ${{ matrix.os }}
-        run: ./gradlew clean build
+        run: ./gradlew build -s
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v3
+        with:
+            name: FastAsyncWorldEdit-SNAPSHOT
+            path: worldedit-bukkit/build/libs/FastAsyncWorldEdit-Bukkit-*.jar

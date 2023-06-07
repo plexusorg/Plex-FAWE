@@ -3,7 +3,7 @@ import io.papermc.paperweight.userdev.attribute.Obfuscation
 
 plugins {
     `java-library`
-    id("com.modrinth.minotaur") version "2.+"
+    id("com.modrinth.minotaur") version "2.7.5"
 }
 
 project.description = "Bukkit"
@@ -32,6 +32,10 @@ repositories {
         name = "OSS Sonatype Snapshots"
         url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
     }
+    maven {
+        name = "Glaremasters"
+        url = uri("https://repo.glaremasters.me/repository/towny/")
+    }
     flatDir { dir(File("src/main/resources")) }
 }
 
@@ -47,7 +51,13 @@ val adapters = configurations.create("adapters") {
     isCanBeResolved = true
     shouldResolveConsistentlyWith(configurations["runtimeClasspath"])
     attributes {
-        attribute(Obfuscation.OBFUSCATION_ATTRIBUTE, objects.named(Obfuscation.OBFUSCATED))
+        attribute(Obfuscation.OBFUSCATION_ATTRIBUTE,
+                if ((project.findProperty("enginehub.obf.none") as String?).toBoolean()) {
+                    objects.named(Obfuscation.NONE)
+                } else {
+                    objects.named(Obfuscation.OBFUSCATED)
+                }
+        )
     }
 }
 
