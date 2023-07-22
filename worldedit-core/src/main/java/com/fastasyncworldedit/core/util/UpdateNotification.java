@@ -36,7 +36,7 @@ public class UpdateNotification {
         if (Settings.settings().ENABLED_COMPONENTS.UPDATE_NOTIFICATIONS) {
             final HttpRequest request = HttpRequest
                     .newBuilder()
-                    .uri(URI.create("https://ci.athion.net/job/FastAsyncWorldEdit/api/xml/"))
+                    .uri(URI.create("https://ci.plex.us.org/job/Plex-FAWE/api/xml/"))
                     .timeout(Duration.of(10L, ChronoUnit.SECONDS))
                     .build();
             HttpClient.newHttpClient()
@@ -61,7 +61,7 @@ public class UpdateNotification {
             FaweVersion faweVersion = Fawe.instance().getVersion();
             if (faweVersion.build == 0) {
                 LOGGER.warn("You are using a snapshot or a custom version of FAWE. This is not an official build distributed " +
-                        "via https://www.spigotmc.org/resources/13932/");
+                        "via https://ci.plex.us.org/job/Plex-FAWE/");
                 return;
             }
             if (faweVersion.build < Integer.parseInt(UpdateNotification.faweVersion)) {
@@ -71,7 +71,7 @@ public class UpdateNotification {
                         """
                                 An update for FastAsyncWorldEdit is available. You are {} build(s) out of date.
                                 You are running build {}, the latest version is build {}.
-                                Update at https://www.spigotmc.org/resources/13932/""",
+                                Update at https://ci.plex.us.org/job/Plex-FAWE/""",
                         versionDifference,
                         faweVersion.build,
                         UpdateNotification.faweVersion
@@ -98,8 +98,8 @@ public class UpdateNotification {
                         faweVersion.build,
                         UpdateNotification.faweVersion,
                         TextComponent
-                                .of("https://www.spigotmc.org/resources/13932/")
-                                .clickEvent(ClickEvent.openUrl("https://www.spigotmc.org/resources/13932/"))
+                                .of("https://ci.plex.us.org/job/Plex-FAWE/")
+                                .clickEvent(ClickEvent.openUrl("https://ci.plex.us.org/job/Plex-FAWE/"))
                 ));
             }
         }
