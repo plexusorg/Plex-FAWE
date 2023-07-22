@@ -23,9 +23,11 @@ import com.sk89q.worldedit.world.World;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 
+import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -40,7 +42,7 @@ public class PlotSquaredFeature extends FaweMaskManager {
         if (Settings.FAWE_Components.FAWE_HOOK) {
             Settings.Enabled_Components.WORLDEDIT_RESTRICTIONS = false;
             if (Settings.PLATFORM.toLowerCase(Locale.ROOT).startsWith("bukkit")) {
-                new FaweTrim();
+            //    new FaweTrim();
             }
             // TODO: revisit this later on
             /*
@@ -192,6 +194,10 @@ public class PlotSquaredFeature extends FaweMaskManager {
             maskedRegion = new RegionIntersection(world, weRegions);
         }
 
+        if (plot == null) {
+            return new FaweMask(maskedRegion);
+        }
+
         return new PlotSquaredMask(maskedRegion, finalPlot);
     }
 
@@ -201,9 +207,9 @@ public class PlotSquaredFeature extends FaweMaskManager {
         private final WeakReference<Set<Plot>> connectedPlots;
         private final boolean singlePlot;
 
-        private PlotSquaredMask(Region region, Plot plot) {
+        private PlotSquaredMask(@Nonnull Region region, @Nonnull Plot plot) {
             super(region);
-            this.plot = plot;
+            this.plot = Objects.requireNonNull(plot);
             Set<Plot> connected = plot.getConnectedPlots();
             connectedPlots = new WeakReference<>(connected);
             singlePlot = connected.size() == 1;
@@ -211,8 +217,9 @@ public class PlotSquaredFeature extends FaweMaskManager {
 
         @Override
         public boolean isValid(Player player, MaskType type, boolean notify) {
-            if ((!connectedPlots.refersTo(plot.getConnectedPlots()) && !singlePlot) || (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(
-                    plot))) {
+            if ((!connectedPlots.refersTo(plot.getConnectedPlots()) && (!singlePlot || plot
+                    .getConnectedPlots()
+                    .size() > 1)) || (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot))) {
                 return false;
             }
             return isAllowed(player, plot, type, notify);

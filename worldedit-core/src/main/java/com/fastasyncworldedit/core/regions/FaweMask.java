@@ -4,12 +4,15 @@ import com.fastasyncworldedit.core.extent.processor.ProcessorScope;
 import com.sk89q.worldedit.entity.Player;
 import com.sk89q.worldedit.regions.Region;
 
+import javax.annotation.Nonnull;
+import java.util.Objects;
+
 public class FaweMask implements IDelegateRegion {
 
     private final Region region;
 
-    public FaweMask(Region region) {
-        this.region = region;
+    public FaweMask(@Nonnull Region region) {
+        this.region = Objects.requireNonNull(region);
     }
 
     @Override
@@ -35,7 +38,7 @@ public class FaweMask implements IDelegateRegion {
      * @param type   type of mask
      * @param notify if the player should be notified
      * @return if still valid
-     * @since TODO
+     * @since 2.7.0
      */
     public boolean isValid(Player player, FaweMaskManager.MaskType type, boolean notify) {
         return isValid(player, type);
