@@ -25,7 +25,6 @@ import com.sk89q.worldedit.util.YAMLConfiguration;
 import com.sk89q.worldedit.util.report.Unreported;
 import org.apache.logging.log4j.LogManager;
 
-import java.io.File;
 import java.nio.file.Path;
 
 /**
