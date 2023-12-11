@@ -316,9 +316,10 @@ public class SchematicCommands {
             Actor actor, LocalSession session,
             @Arg(desc = "File name.")
             String filename,
-            @Arg(desc = "Format name.", def = "fast")
-            String formatName,
+
             //FAWE start - random rotation
+            @Arg(desc = "Format name.", def = "")
+                    String formatName,
             @Switch(name = 'r', desc = "Apply random rotation to the clipboard")
                     boolean randomRotate
             //FAWE end
@@ -328,6 +329,11 @@ public class SchematicCommands {
         //FAWE start
         ClipboardFormat format;
         InputStream in = null;
+        // if format is set explicitly, do not look up by extension!
+        boolean noExplicitFormat = formatName == null;
+        if (noExplicitFormat) {
+            formatName = "fast";
+        }
         try {
             URI uri;
 
@@ -357,7 +363,7 @@ public class SchematicCommands {
                     actor.print(Caption.of("fawe.error.no-perm", "worldedit.schematic.load.other"));
                     return;
                 }
-                if (filename.matches(".*\\.[\\w].*")) {
+                if (noExplicitFormat && filename.matches(".*\\.[\\w].*")) {
                     format = ClipboardFormats
                             .findByExtension(filename.substring(filename.lastIndexOf('.') + 1));
                 } else {
@@ -387,7 +393,6 @@ public class SchematicCommands {
 
             in = new FileInputStream(file);
             uri = file.toURI();
-
             format.hold(actor, uri, in);
             if (randomRotate) {
                 AffineTransform transform = new AffineTransform();
