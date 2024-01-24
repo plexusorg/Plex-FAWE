@@ -11,11 +11,11 @@ snakeyaml = "2.0"
 dummypermscompat = "1.10"
 worldguard-bukkit = "7.0.9"
 mapmanager = "1.8.0-SNAPSHOT"
-griefprevention = "16.18.1"
+griefprevention = "17.0.0"
 griefdefender = "2.1.0-SNAPSHOT"
 residence = "4.5._13.1"
-towny = "0.100.0.11"
-plotsquared = "7.2.1"
+towny = "0.100.1.5"
+plotsquared = "7.3.1"
 
 # Third party
 bstats = "3.0.2"
@@ -46,7 +46,7 @@ text = "3.0.4"
 piston = "0.5.7"
 
 # Tests
-mockito = "5.8.0"
+mockito = "5.9.0"
 
 # Gradle plugins
 pluginyml = "0.6.0"
