@@ -16,6 +16,10 @@ fun Project.applyCommonConfiguration() {
             url = uri("https://maven.enginehub.org/repo/")
         }
         maven {
+            name = "FabricMC"
+            url = uri("https://maven.fabricmc.net/")
+        }
+        maven {
             name = "OSS Sonatype Snapshots"
             url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
         }
