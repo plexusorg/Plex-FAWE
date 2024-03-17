@@ -18,7 +18,11 @@ repositories {
     }
     maven {
         name = "EngineHub"
-        url = uri("https://maven.enginehub.org/repo/")
+        url = uri("https://maven.enginehub.com/repo/")
+    }
+    maven {
+        name = "FabricMC"
+        url = uri("https://maven.fabricmc.net/")
     }
     maven {
         name = "JitPack"
