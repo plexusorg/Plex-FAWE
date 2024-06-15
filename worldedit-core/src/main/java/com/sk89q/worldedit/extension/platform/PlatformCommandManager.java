@@ -84,6 +84,8 @@ import com.sk89q.worldedit.command.WorldEditCommandsRegistration;
 import com.sk89q.worldedit.command.argument.Arguments;
 import com.sk89q.worldedit.command.argument.BooleanConverter;
 import com.sk89q.worldedit.command.argument.Chunk3dVectorConverter;
+import com.sk89q.worldedit.command.argument.ClipboardFormatConverter;
+import com.sk89q.worldedit.command.argument.ClipboardShareDestinationConverter;
 import com.sk89q.worldedit.command.argument.CommaSeparatedValuesConverter;
 import com.sk89q.worldedit.command.argument.DirectionConverter;
 import com.sk89q.worldedit.command.argument.DirectionVectorConverter;
@@ -171,7 +173,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-
 
 /**
  * Handles the registration and invocation of commands.
@@ -270,6 +271,8 @@ public final class PlatformCommandManager {
         SideEffectConverter.register(commandManager);
         HeightConverter.register(commandManager);
         OffsetConverter.register(worldEdit, commandManager);
+        ClipboardFormatConverter.register(commandManager);
+        ClipboardShareDestinationConverter.register(commandManager);
         //FAWE start
         commandManager.registerConverter(
                 Key.of(com.sk89q.worldedit.function.pattern.Pattern.class, Annotations.patternList()),
@@ -596,7 +599,6 @@ public final class PlatformCommandManager {
 
     void registerCommandsWith(Platform platform) {
         LOGGER.info("Registering commands with " + platform.getClass().getCanonicalName());
-
 
         LocalConfiguration config = platform.getConfiguration();
         boolean logging = config.logCommands;

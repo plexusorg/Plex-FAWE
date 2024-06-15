@@ -59,12 +59,12 @@ public class UpdateNotification {
             Document doc = db.parse(body);
             faweVersion = doc.getElementsByTagName("lastSuccessfulBuild").item(0).getFirstChild().getTextContent();
             FaweVersion faweVersion = Fawe.instance().getVersion();
-            if (faweVersion.build == 0 && !faweVersion.snapshot) {
+            if (faweVersion.build == 0 && faweVersion.snapshot) {
                 LOGGER.warn("You are using a snapshot or a custom version of FAWE. This is not an official build distributed " +
                         "via https://ci.plex.us.org/job/Plex-FAWE/");
                 return;
             }
-            if (faweVersion.build < Integer.parseInt(UpdateNotification.faweVersion)) {
+            if (faweVersion.snapshot && faweVersion.build < Integer.parseInt(UpdateNotification.faweVersion)) {
                 hasUpdate = true;
                 int versionDifference = Integer.parseInt(UpdateNotification.faweVersion) - faweVersion.build;
                 LOGGER.warn(

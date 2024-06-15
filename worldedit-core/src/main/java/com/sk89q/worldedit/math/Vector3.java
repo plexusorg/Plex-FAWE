@@ -33,7 +33,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 /**
  * An immutable 3-dimensional vector.
  */
+//FAWE start - not a record, make abstract
 public abstract class Vector3 {
+//FAWE end
 
     public static final Vector3 ZERO = Vector3.at(0, 0, 0);
     public static final Vector3 UNIT_X = Vector3.at(1, 0, 0);
@@ -73,9 +75,9 @@ public abstract class Vector3 {
 
         private static final Comparator<Vector3> YZX_ORDER = (a, b) -> {
             return ComparisonChain.start()
-                    .compare(a.getY(), b.getY())
-                    .compare(a.getZ(), b.getZ())
-                    .compare(a.getX(), b.getX())
+                    .compare(a.y(), b.y())
+                    .compare(a.z(), b.z())
+                    .compare(a.x(), b.x())
                     .result();
         };
 
@@ -100,7 +102,7 @@ public abstract class Vector3 {
      * @return the x coordinate
      */
     public int getBlockX() {
-        return MathMan.roundInt(getX());
+        return MathMan.roundInt(x());
     }
 
     /**
@@ -109,7 +111,7 @@ public abstract class Vector3 {
      * @return the y coordinate
      */
     public int getBlockY() {
-        return MathMan.roundInt(getY());
+        return MathMan.roundInt(y());
     }
 
     /**
@@ -118,7 +120,7 @@ public abstract class Vector3 {
      * @return the z coordinate
      */
     public int getBlockZ() {
-        return MathMan.roundInt(getZ());
+        return MathMan.roundInt(z());
     }
 
     public MutableVector3 setComponents(Vector3 other) {
@@ -134,27 +136,27 @@ public abstract class Vector3 {
     }
 
     public MutableVector3 mutX(int x) {
-        return new MutableVector3(x, getY(), getZ());
+        return new MutableVector3(x, y(), z());
     }
 
     public MutableVector3 mutX(double x) {
-        return new MutableVector3(x, getY(), getZ());
+        return new MutableVector3(x, y(), z());
     }
 
     public MutableVector3 mutY(int y) {
-        return new MutableVector3(getX(), y, getZ());
+        return new MutableVector3(x(), y, z());
     }
 
     public MutableVector3 mutY(double y) {
-        return new MutableVector3(getX(), y, getZ());
+        return new MutableVector3(x(), y, z());
     }
 
     public MutableVector3 mutZ(int z) {
-        return new MutableVector3(getX(), getY(), z);
+        return new MutableVector3(x(), y(), z);
     }
 
     public MutableVector3 mutZ(double z) {
-        return new MutableVector3(getX(), getY(), z);
+        return new MutableVector3(x(), y(), z);
     }
     //FAWE end
 
@@ -162,10 +164,29 @@ public abstract class Vector3 {
      * Get the X coordinate.
      *
      * @return the x coordinate
+     * @since TODO
      */
-    //FAWE start - made abstract
-    public abstract double getX();
-    //FAWE end
+    public abstract double x();
+
+    /**
+     * Get the X coordinate, aligned to the block grid.
+     *
+     * @return the block-aligned x coordinate
+     */
+    public int blockX() {
+        return MathMan.roundInt(this.x());
+    }
+
+    /**
+     * Get the X coordinate.
+     *
+     * @return the x coordinate
+     * @deprecated use {@link #x()} instead
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
+    public double getX() {
+        return this.x();
+    }
 
     /**
      * Set the X coordinate.
@@ -175,18 +196,38 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public Vector3 withX(double x) {
-        return Vector3.at(x, getY(), getZ());
+        return Vector3.at(x, y(), z());
     }
     //FAWE end
+
 
     /**
      * Get the Y coordinate.
      *
      * @return the y coordinate
+     * @since TODO
      */
-    //FAWE start - made abstract
-    public abstract double getY();
-    //FAWE end
+    public abstract double y();
+
+    /**
+     * Get the Y coordinate, aligned to the block grid.
+     *
+     * @return the block-aligned y coordinate
+     */
+    public int blockY() {
+        return MathMan.roundInt(this.y());
+    }
+
+    /**
+     * Get the Y coordinate.
+     *
+     * @return the y coordinate
+     * @deprecated use {@link #y()} instead
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
+    public double getY() {
+        return this.y();
+    }
 
     /**
      * Set the Y coordinate.
@@ -196,7 +237,7 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public Vector3 withY(double y) {
-        return Vector3.at(getX(), y, getZ());
+        return Vector3.at(x(), y, z());
     }
     //FAWE end
 
@@ -204,10 +245,29 @@ public abstract class Vector3 {
      * Get the Z coordinate.
      *
      * @return the z coordinate
+     * @since TODO
      */
-    //FAWE start - made abstract
-    public abstract double getZ();
-    //FAWE end
+    public abstract double z();
+
+    /**
+     * Get the Z coordinate, aligned to the block grid.
+     *
+     * @return the block-aligned z coordinate
+     */
+    public int blockZ() {
+        return MathMan.roundInt(this.z());
+    }
+
+    /**
+     * Get the Z coordinate.
+     *
+     * @return the z coordinate
+     * @deprecated use {@link #z()} instead
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
+    public double getZ() {
+        return this.z();
+    }
 
     /**
      * Set the Z coordinate.
@@ -217,7 +277,7 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public Vector3 withZ(double z) {
-        return Vector3.at(getX(), getY(), z);
+        return Vector3.at(x(), y(), z);
     }
     //FAWE end
 
@@ -229,7 +289,7 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public Vector3 add(Vector3 other) {
-        return add(other.getX(), other.getY(), other.getZ());
+        return add(other.x(), other.y(), other.z());
     }
     //FAWE end
 
@@ -243,7 +303,7 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public Vector3 add(double x, double y, double z) {
-        return Vector3.at(this.getX() + x, this.getY() + y, this.getZ() + z);
+        return Vector3.at(this.x() + x, this.y() + y, this.z() + z);
     }
     //FAWE end
 
@@ -256,14 +316,14 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public Vector3 add(Vector3... others) {
-        double newX = getX();
-        double newY = getY();
-        double newZ = getZ();
+        double newX = x();
+        double newY = y();
+        double newZ = z();
 
         for (Vector3 other : others) {
-            newX += other.getX();
-            newY += other.getY();
-            newZ += other.getZ();
+            newX += other.x();
+            newY += other.y();
+            newZ += other.z();
         }
 
         return Vector3.at(newX, newY, newZ);
@@ -279,7 +339,7 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public Vector3 subtract(Vector3 other) {
-        return subtract(other.getX(), other.getY(), other.getZ());
+        return subtract(other.x(), other.y(), other.z());
     }
     //FAWE end
 
@@ -294,7 +354,7 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public Vector3 subtract(double x, double y, double z) {
-        return Vector3.at(this.getX() - x, this.getY() - y, this.getZ() - z);
+        return Vector3.at(this.x() - x, this.y() - y, this.z() - z);
     }
     //FAWE end
 
@@ -307,14 +367,14 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public Vector3 subtract(Vector3... others) {
-        double newX = getX();
-        double newY = getY();
-        double newZ = getZ();
+        double newX = x();
+        double newY = y();
+        double newZ = z();
 
         for (Vector3 other : others) {
-            newX -= other.getX();
-            newY -= other.getY();
-            newZ -= other.getZ();
+            newX -= other.x();
+            newY -= other.y();
+            newZ -= other.z();
         }
 
         return Vector3.at(newX, newY, newZ);
@@ -329,7 +389,7 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public Vector3 multiply(Vector3 other) {
-        return multiply(other.getX(), other.getY(), other.getZ());
+        return multiply(other.x(), other.y(), other.z());
     }
     //FAWE end
 
@@ -343,7 +403,7 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public Vector3 multiply(double x, double y, double z) {
-        return Vector3.at(this.getX() * x, this.getY() * y, this.getZ() * z);
+        return Vector3.at(this.x() * x, this.y() * y, this.z() * z);
     }
     //FAWE end
 
@@ -355,14 +415,14 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public Vector3 multiply(Vector3... others) {
-        double newX = getX();
-        double newY = getY();
-        double newZ = getZ();
+        double newX = x();
+        double newY = y();
+        double newZ = z();
 
         for (Vector3 other : others) {
-            newX *= other.getX();
-            newY *= other.getY();
-            newZ *= other.getZ();
+            newX *= other.x();
+            newY *= other.y();
+            newZ *= other.z();
         }
 
         return Vector3.at(newX, newY, newZ);
@@ -387,7 +447,7 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public Vector3 divide(Vector3 other) {
-        return divide(other.getX(), other.getY(), other.getZ());
+        return divide(other.x(), other.y(), other.z());
     }
     //FAWE end
 
@@ -401,7 +461,7 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public Vector3 divide(double x, double y, double z) {
-        return Vector3.at(this.getX() / x, this.getY() / y, this.getZ() / z);
+        return Vector3.at(this.x() / x, this.y() / y, this.z() / z);
     }
     //FAWE end
 
@@ -431,7 +491,7 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public double lengthSq() {
-        return getX() * getX() + getY() * getY() + getZ() * getZ();
+        return x() * x() + y() * y() + z() * z();
     }
     //FAWE end
 
@@ -453,9 +513,9 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public double distanceSq(Vector3 other) {
-        double dx = other.getX() - getX();
-        double dy = other.getY() - getY();
-        double dz = other.getZ() - getZ();
+        double dx = other.x() - x();
+        double dy = other.y() - y();
+        double dz = other.z() - z();
         return dx * dx + dy * dy + dz * dz;
     }
     //FAWE end
@@ -478,7 +538,7 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public double dot(Vector3 other) {
-        return getX() * other.getX() + getY() * other.getY() + getZ() * other.getZ();
+        return x() * other.x() + y() * other.y() + z() * other.z();
     }
     //FAWE end
 
@@ -491,9 +551,9 @@ public abstract class Vector3 {
     //FAWE start - getter
     public Vector3 cross(Vector3 other) {
         return Vector3.at(
-                getY() * other.getZ() - getZ() * other.getY(),
-                getZ() * other.getX() - getX() * other.getZ(),
-                getX() * other.getY() - getY() * other.getX()
+                y() * other.z() - z() * other.y(),
+                z() * other.x() - x() * other.z(),
+                x() * other.y() - y() * other.x()
         );
     }
     //FAWE end
@@ -507,8 +567,7 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public boolean containedWithin(Vector3 min, Vector3 max) {
-        return getX() >= min.getX() && getX() <= max.getX() && getY() >= min.getY() && getY() <= max.getY() && getZ() >= min.getZ() && getZ() <= max
-                .getZ();
+        return x() >= min.x() && x() <= max.x() && y() >= min.y() && y() <= max.y() && z() >= min.z() && z() <= max.z();
     }
     //FAWE end
 
@@ -522,11 +581,11 @@ public abstract class Vector3 {
     //FAWE start - getter
     public Vector3 clampY(int min, int max) {
         checkArgument(min <= max, "minimum cannot be greater than maximum");
-        if (getY() < min) {
-            return Vector3.at(getX(), min, getZ());
+        if (y() < min) {
+            return Vector3.at(x(), min, z());
         }
-        if (getY() > max) {
-            return Vector3.at(getX(), max, getZ());
+        if (y() > max) {
+            return Vector3.at(x(), max, z());
         }
         return this;
     }
@@ -539,7 +598,7 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public Vector3 floor() {
-        return Vector3.at(Math.floor(getX()), Math.floor(getY()), Math.floor(getZ()));
+        return Vector3.at(Math.floor(x()), Math.floor(y()), Math.floor(z()));
     }
     //FAWE end
 
@@ -550,7 +609,7 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public Vector3 ceil() {
-        return Vector3.at(Math.ceil(getX()), Math.ceil(getY()), Math.ceil(getZ()));
+        return Vector3.at(Math.ceil(x()), Math.ceil(y()), Math.ceil(z()));
     }
     //FAWE end
 
@@ -563,7 +622,7 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public Vector3 round() {
-        return Vector3.at(Math.floor(getX() + 0.5), Math.floor(getY() + 0.5), Math.floor(getZ() + 0.5));
+        return Vector3.at(Math.floor(x() + 0.5), Math.floor(y() + 0.5), Math.floor(z() + 0.5));
     }
     //FAWE end
 
@@ -574,7 +633,7 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public Vector3 roundHalfUp() {
-        return Vector3.at(MathUtils.roundHalfUp(getX()), MathUtils.roundHalfUp(getY()), MathUtils.roundHalfUp(getZ()));
+        return Vector3.at(MathUtils.roundHalfUp(x()), MathUtils.roundHalfUp(y()), MathUtils.roundHalfUp(z()));
     }
     //FAWE end
 
@@ -586,7 +645,7 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public Vector3 abs() {
-        return Vector3.at(Math.abs(getX()), Math.abs(getY()), Math.abs(getZ()));
+        return Vector3.at(Math.abs(x()), Math.abs(y()), Math.abs(z()));
     }
     //FAWE end
 
@@ -604,8 +663,8 @@ public abstract class Vector3 {
     //FAWE start - getter
     public Vector3 transform2D(double angle, double aboutX, double aboutZ, double translateX, double translateZ) {
         angle = Math.toRadians(angle);
-        double x = this.getX() - aboutX;
-        double z = this.getZ() - aboutZ;
+        double x = this.x() - aboutX;
+        double z = this.z() - aboutZ;
         double cos = Math.cos(angle);
         double sin = Math.sin(angle);
         double x2 = x * cos - z * sin;
@@ -613,7 +672,7 @@ public abstract class Vector3 {
 
         return Vector3.at(
                 x2 + aboutX + translateX,
-                getY(),
+                y(),
                 z2 + aboutZ + translateZ
         );
     }
@@ -625,16 +684,16 @@ public abstract class Vector3 {
      * @return pitch in radians
      */
     public double toPitch() {
-        double x = getX();
-        double z = getZ();
+        double x = x();
+        double z = z();
 
         if (x == 0 && z == 0) {
-            return getY() > 0 ? -90 : 90;
+            return y() > 0 ? -90 : 90;
         } else {
             double x2 = x * x;
             double z2 = z * z;
             double xz = Math.sqrt(x2 + z2);
-            return Math.toDegrees(Math.atan(-getY() / xz));
+            return Math.toDegrees(Math.atan(-y() / xz));
         }
     }
 
@@ -644,8 +703,8 @@ public abstract class Vector3 {
      * @return yaw in radians
      */
     public double toYaw() {
-        double x = getX();
-        double z = getZ();
+        double x = x();
+        double z = z();
 
         double t = Math.atan2(-x, z);
         double tau = 2 * Math.PI;
@@ -662,9 +721,9 @@ public abstract class Vector3 {
     //FAWE start - getter
     public Vector3 getMinimum(Vector3 v2) {
         return Vector3.at(
-                Math.min(getX(), v2.getX()),
-                Math.min(getY(), v2.getY()),
-                Math.min(getZ(), v2.getZ())
+                Math.min(x(), v2.x()),
+                Math.min(y(), v2.y()),
+                Math.min(z(), v2.z())
         );
     }
     //FAWE end
@@ -678,9 +737,9 @@ public abstract class Vector3 {
     //FAWE start - getter
     public Vector3 getMaximum(Vector3 v2) {
         return Vector3.at(
-                Math.max(getX(), v2.getX()),
-                Math.max(getY(), v2.getY()),
-                Math.max(getZ(), v2.getZ())
+                Math.max(x(), v2.x()),
+                Math.max(y(), v2.y()),
+                Math.max(z(), v2.z())
         );
     }
     //FAWE end
@@ -704,7 +763,7 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public BlockVector3 toBlockPoint() {
-        return toBlockPoint(getX(), getY(), getZ());
+        return toBlockPoint(x(), y(), z());
     }
     //FAWE end
 
@@ -715,23 +774,19 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public Vector2 toVector2() {
-        return Vector2.at(getX(), getZ());
+        return Vector2.at(x(), z());
     }
     //FAWE end
 
+    //FAWE start - not a record, need own implementations
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Vector3)) {
+        if (!(obj instanceof final Vector3 other)) {
             return false;
         }
 
-        Vector3 other = (Vector3) obj;
-        //FAWE start - getter
-        return other.getX() == this.getX() && other.getY() == this.getY() && other.getZ() == this.getZ();
-        //FAWE end
+        return other.x() == this.x() && other.y() == this.y() && other.z() == this.z();
     }
-
-    //FAWE start
 
     /**
      * Tests if vectors are equal, accounting for floating point errors
@@ -745,28 +800,27 @@ public abstract class Vector3 {
         }
 
         // Minecraft deals in whole blocks, thus any difference smaller than this is unnecessary
-        if (Math.abs(getX() - other.getX()) > 0.000001d) {
+        if (Math.abs(x() - other.x()) > 0.000001d) {
             return false;
         }
-        if (Math.abs(getY() - other.getY()) > 0.000001d) {
+        if (Math.abs(y() - other.y()) > 0.000001d) {
             return false;
         }
-        return !(Math.abs(getZ() - other.getZ()) > 0.000001d);
+        return !(Math.abs(z() - other.z()) > 0.000001d);
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) x() ^ (int) z() << 12 ^ (int) y() << 24;
     }
     //FAWE end
 
     @Override
-    //FAWE start - XOR over get calculating all values independently
-    public int hashCode() {
-        return (int) getX() ^ (int) getZ() << 12 ^ (int) getY() << 24;
-    }
-
-    @Override
     public String toString() {
         //FAWE start - getter & ternary
-        String x = (getX() == getBlockX() ? "" + getBlockX() : "" + getX());
-        String y = (getY() == getBlockY() ? "" + getBlockY() : "" + getY());
-        String z = (getZ() == getBlockZ() ? "" + getBlockZ() : "" + getZ());
+        String x = (x() == blockX() ? "" + blockX() : "" + x());
+        String y = (y() == blockY() ? "" + blockY() : "" + y());
+        String z = (z() == blockZ() ? "" + blockZ() : "" + z());
         //FAWE end
         return "(" + x + ", " + y + ", " + z + ")";
     }
@@ -778,7 +832,7 @@ public abstract class Vector3 {
      */
     //FAWE start - getter
     public String toParserString() {
-        return getX() + "," + getY() + "," + getZ();
+        return x() + "," + y() + "," + z();
     }
     //FAWE end
 

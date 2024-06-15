@@ -183,7 +183,7 @@ public class MinecraftStructure implements ClipboardReader, ClipboardWriter {
 
             indexes.put(combined, (Integer) palette.size());
             HashMap<String, Object> paletteEntry = new HashMap<>();
-            paletteEntry.put("Name", type.getId());
+            paletteEntry.put("Name", type.id());
             if (block.getInternalId() != type.getInternalId()) {
                 Map<String, Object> properties = null;
                 for (AbstractProperty property : (List<AbstractProperty<?>>) type.getProperties()) {
@@ -213,8 +213,8 @@ public class MinecraftStructure implements ClipboardReader, ClipboardWriter {
             if (block.getBlockType() != BlockTypes.STRUCTURE_VOID) {
                 int combined = block.getInternalId();
                 int index = indexes.get(combined);
-                List<Integer> pos = Arrays.asList(point.getX() - min.getX(),
-                        point.getY() - min.getY(), point.getZ() - min.getZ()
+                List<Integer> pos = Arrays.asList(point.x() - min.x(),
+                        point.y() - min.y(), point.z() - min.z()
                 );
                 if (!block.hasNbtData()) {
                     blocks.add(FaweCache.INSTANCE.asMap("state", index, "pos", pos));
@@ -231,16 +231,16 @@ public class MinecraftStructure implements ClipboardReader, ClipboardWriter {
         ArrayList<Map<String, Object>> entities = new ArrayList<>();
         for (Entity entity : clipboard.getEntities()) {
             Location loc = entity.getLocation();
-            List<Double> pos = Arrays.asList(loc.getX(), loc.getY(), loc.getZ());
+            List<Double> pos = Arrays.asList(loc.x(), loc.y(), loc.z());
             List<Integer> blockPos = Arrays.asList(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
             BaseEntity state = entity.getState();
             if (state != null) {
                 CompoundTag nbt = state.getNbtData();
-                Map<String, Tag> nbtMap = nbt.getValue();
+                Map<String, Tag> nbtMap = new HashMap<>(nbt.getValue());
                 // Replace rotation data
                 nbtMap.put("Rotation", writeRotation(entity.getLocation()));
-                nbtMap.put("id", new StringTag(state.getType().getId()));
-                Map<String, Object> entityMap = FaweCache.INSTANCE.asMap("pos", pos, "blockPos", blockPos, "nbt", nbt);
+                nbtMap.put("id", new StringTag(state.getType().id()));
+                Map<String, Object> entityMap = FaweCache.INSTANCE.asMap("pos", pos, "blockPos", blockPos, "nbt", new CompoundTag(nbtMap));
                 entities.add(entityMap);
             }
         }

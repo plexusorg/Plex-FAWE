@@ -87,7 +87,6 @@ public class PaperweightGetBlocks extends CharGetBlocks implements BukkitGetBloc
     private final Registry<Biome> biomeRegistry;
     private final IdMap<Holder<Biome>> biomeHolderIdMap;
     private final ConcurrentHashMap<Integer, PaperweightGetBlocks_Copy> copies = new ConcurrentHashMap<>();
-    private final Object sendLock = new Object();
     private LevelChunkSection[] sections;
     private LevelChunk levelChunk;
     private DataLayer[] blockLight;
@@ -771,9 +770,9 @@ public class PaperweightGetBlocks extends CharGetBlocks implements BukkitGetBloc
                         for (final Map.Entry<BlockVector3, CompoundTag> entry : tiles.entrySet()) {
                             final CompoundTag nativeTag = entry.getValue();
                             final BlockVector3 blockHash = entry.getKey();
-                            final int x = blockHash.getX() + bx;
-                            final int y = blockHash.getY();
-                            final int z = blockHash.getZ() + bz;
+                            final int x = blockHash.x() + bx;
+                            final int y = blockHash.y();
+                            final int z = blockHash.z() + bz;
                             final BlockPos pos = new BlockPos(x, y, z);
 
                             synchronized (nmsWorld) {
@@ -808,7 +807,7 @@ public class PaperweightGetBlocks extends CharGetBlocks implements BukkitGetBloc
                         nmsChunk.setUnsaved(true);
                         // send to player
                         if (Settings.settings().LIGHTING.MODE == 0 || !Settings.settings().LIGHTING.DELAY_PACKET_SENDING) {
-                            this.send(finalMask, finalLightUpdate);
+                            this.send();
                         }
                         if (finalizer != null) {
                             finalizer.run();
@@ -904,10 +903,8 @@ public class PaperweightGetBlocks extends CharGetBlocks implements BukkitGetBloc
     }
 
     @Override
-    public void send(int mask, boolean lighting) {
-        synchronized (sendLock) {
-            PaperweightPlatformAdapter.sendChunk(serverLevel, chunkX, chunkZ, lighting);
-        }
+    public void send() {
+        PaperweightPlatformAdapter.sendChunk(this, serverLevel, chunkX, chunkZ);
     }
 
     /**

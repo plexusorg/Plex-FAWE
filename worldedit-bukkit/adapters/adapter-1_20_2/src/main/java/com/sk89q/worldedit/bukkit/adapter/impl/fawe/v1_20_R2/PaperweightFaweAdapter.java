@@ -475,7 +475,7 @@ public final class PaperweightFaweAdapter extends FaweAdapter<net.minecraft.nbt.
         net.minecraft.world.level.block.state.BlockState blockState1 = Block.stateById(internalId);
         return blockState1.hasPostProcess(
                 getServerLevel(world),
-                new BlockPos(blockVector3.getX(), blockVector3.getY(), blockVector3.getZ())
+                new BlockPos(blockVector3.x(), blockVector3.y(), blockVector3.z())
         );
     }
 
@@ -483,7 +483,7 @@ public final class PaperweightFaweAdapter extends FaweAdapter<net.minecraft.nbt.
     public org.bukkit.inventory.ItemStack adapt(BaseItemStack baseItemStack) {
         ItemStack stack = new ItemStack(
                 DedicatedServer.getServer().registryAccess().registryOrThrow(Registries.ITEM)
-                        .get(ResourceLocation.tryParse(baseItemStack.getType().getId())),
+                        .get(ResourceLocation.tryParse(baseItemStack.getType().id())),
                 baseItemStack.getAmount()
         );
         stack.setTag(((net.minecraft.nbt.CompoundTag) fromNative(baseItemStack.getNbtData())));
@@ -550,7 +550,7 @@ public final class PaperweightFaweAdapter extends FaweAdapter<net.minecraft.nbt.
                 .getServer()
                 .registryAccess()
                 .registryOrThrow(BIOME);
-        ResourceLocation resourceLocation = ResourceLocation.tryParse(biomeType.getId());
+        ResourceLocation resourceLocation = ResourceLocation.tryParse(biomeType.id());
         Biome biome = registry.get(resourceLocation);
         return registry.getId(biome);
     }

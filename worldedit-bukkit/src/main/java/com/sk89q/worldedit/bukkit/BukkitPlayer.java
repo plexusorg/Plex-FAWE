@@ -162,7 +162,7 @@ public class BukkitPlayer extends AbstractPlayerActor {
         final PlayerInventory inv = player.getInventory();
         ItemStack newItem = BukkitAdapter.adapt(itemStack);
         TaskManager.taskManager().sync(() -> {
-            if (itemStack.getType().getId().equalsIgnoreCase(WorldEdit.getInstance().getConfiguration().wandItem)) {
+            if (itemStack.getType().id().equalsIgnoreCase(WorldEdit.getInstance().getConfiguration().wandItem)) {
                 inv.remove(newItem);
             }
             final ItemStack item = player.getInventory().getItemInMainHand();
@@ -242,9 +242,9 @@ public class BukkitPlayer extends AbstractPlayerActor {
         //FAWE end
         return TaskManager.taskManager().sync(() -> player.teleport(new Location(
                 finalWorld,
-                pos.getX(),
-                pos.getY(),
-                pos.getZ(),
+                pos.x(),
+                pos.y(),
+                pos.z(),
                 yaw,
                 pitch
         )));
@@ -267,7 +267,7 @@ public class BukkitPlayer extends AbstractPlayerActor {
 
     @Override
     public void setGameMode(GameMode gameMode) {
-        player.setGameMode(org.bukkit.GameMode.valueOf(gameMode.getId().toUpperCase(Locale.ROOT)));
+        player.setGameMode(org.bukkit.GameMode.valueOf(gameMode.id().toUpperCase(Locale.ROOT)));
     }
 
     @Override
@@ -422,7 +422,7 @@ public class BukkitPlayer extends AbstractPlayerActor {
 
     @Override
     public <B extends BlockStateHolder<B>> void sendFakeBlock(BlockVector3 pos, B block) {
-        Location loc = new Location(player.getWorld(), pos.getX(), pos.getY(), pos.getZ());
+        Location loc = new Location(player.getWorld(), pos.x(), pos.y(), pos.z());
         if (block == null) {
             player.sendBlockChange(loc, player.getWorld().getBlockAt(loc).getBlockData());
         } else {
