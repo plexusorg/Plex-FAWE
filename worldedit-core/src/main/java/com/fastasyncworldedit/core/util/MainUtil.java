@@ -217,7 +217,7 @@ public class MainUtil {
 //        } else if (changeSet instanceof CPUOptimizedChangeSet) {
 //            return changeSet.size() + 32;
         } else if (changeSet != null) {
-            return changeSet.size() * 128L;
+            return changeSet.longSize() * 128; // Approx
         } else {
             return 0;
         }
@@ -427,7 +427,7 @@ public class MainUtil {
      */
     @Nonnull
     public static CompoundTag setPosition(@Nonnull CompoundTag tag, int x, int y, int z) {
-        Map<String, Tag> value = new HashMap<>(tag.getValue());
+        Map<String, Tag<?, ?>> value = new HashMap<>(tag.getValue());
         value.put("x", new IntTag(x));
         value.put("y", new IntTag(y));
         value.put("z", new IntTag(z));
@@ -443,7 +443,7 @@ public class MainUtil {
      */
     @Nonnull
     public static CompoundTag setEntityInfo(@Nonnull CompoundTag tag, @Nonnull Entity entity) {
-        Map<String, Tag> map = new HashMap<>(tag.getValue());
+        Map<String, Tag<?, ?>> map = new HashMap<>(tag.getValue());
         map.put("Id", new StringTag(entity.getState().getType().id()));
         ListTag pos = (ListTag) map.get("Pos");
         if (pos != null) {
@@ -709,6 +709,12 @@ public class MainUtil {
         if (allowDir) {
             File file = MainUtil.resolveRelative(new File(dir, filename));
             if (file.exists() && file.isDirectory()) {
+                return file;
+            }
+        }
+        if (filename.matches(".*\\.[\\w].*")) {
+            File file = MainUtil.resolveRelative(new File(dir, filename));
+            if (file.exists()) {
                 return file;
             }
         }

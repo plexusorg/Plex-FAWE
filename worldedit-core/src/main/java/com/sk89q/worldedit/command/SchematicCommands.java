@@ -345,7 +345,7 @@ public class SchematicCommands {
                     : saveDir;
             File file;
             if (filename.startsWith("#")) {
-                format = ClipboardFormats.findByAlias(formatName);
+                format = noExplicitFormat ? null :ClipboardFormats.findByAlias(formatName);
                 String[] extensions;
                 if (format != null) {
                     extensions = format.getFileExtensions().toArray(new String[0]);
@@ -365,11 +365,13 @@ public class SchematicCommands {
                     actor.print(Caption.of("fawe.error.no-perm", "worldedit.schematic.load.other"));
                     return;
                 }
-                if (noExplicitFormat && filename.matches(".*\\.[\\w].*")) {
+                if (!noExplicitFormat) {
+                        format = ClipboardFormats.findByAlias(formatName);
+                    } else if ( filename.matches(".*\\.[\\w].*")) {
                     format = ClipboardFormats
-                            .findByExtension(filename.substring(filename.lastIndexOf('.') + 1));
+                            .findByExplicitExtension(filename.substring(filename.lastIndexOf('.') + 1));
                 } else {
-                    format = ClipboardFormats.findByAlias(formatName);
+                    format = null;
                 }
                 file = MainUtil.resolve(dir, filename, format, false);
             }
@@ -387,8 +389,10 @@ public class SchematicCommands {
             }
             if (format == null) {
                 format = ClipboardFormats.findByFile(file);
-                if (format == null) {
-                    actor.print(Caption.of("worldedit.schematic.unknown-format", TextComponent.of(formatName)));
+                if (format == null) {if (noExplicitFormat) {
+                            actor.print(Caption.of("fawe.worldedit.schematic.schematic.load-failure", TextComponent.of(file.getName())));
+                        } else {
+                    actor.print(Caption.of("worldedit.schematic.unknown-format", TextComponent.of(formatName)));}
                     return;
                 }
             }
@@ -408,6 +412,9 @@ public class SchematicCommands {
         } catch (IOException e) {
             actor.print(Caption.of("worldedit.schematic.file-not-exist", TextComponent.of(Objects.toString(e.getMessage()))));
             LOGGER.warn("Failed to load a saved clipboard", e);
+        } catch (Exception e) {
+            actor.print(Caption.of("fawe.worldedit.schematic.schematic.load-failure", TextComponent.of(e.getMessage())));
+            LOGGER.error("Error loading a schematic", e);
         } finally {
             if (in != null) {
                 try {
