@@ -123,29 +123,31 @@ public class Settings extends Config {
                         limit.MAX_ACTIONS,
                         newLimit.MAX_ACTIONS != -1 ? newLimit.MAX_ACTIONS : Integer.MAX_VALUE
                 );
-                limit.MAX_CHANGES = Math.max(
-                        limit.MAX_CHANGES,
+                limit.MAX_CHANGES.set(Math.max(
+                        limit.MAX_CHANGES.get(),
                         newLimit.MAX_CHANGES != -1 ? newLimit.MAX_CHANGES : Long.MAX_VALUE
-                );
-                limit.MAX_BLOCKSTATES = Math.max(
-                        limit.MAX_BLOCKSTATES,
+                ));
+                limit.MAX_BLOCKSTATES.set(Math.max(
+                        limit.MAX_BLOCKSTATES.get(),
                         newLimit.MAX_BLOCKSTATES != -1 ? newLimit.MAX_BLOCKSTATES : Integer.MAX_VALUE
-                );
-                limit.MAX_CHECKS = Math.max(
-                        limit.MAX_CHECKS,
+                ));
+                limit.MAX_CHECKS.set(Math.max(
+                        limit.MAX_CHECKS.get(),
                         newLimit.MAX_CHECKS != -1 ? newLimit.MAX_CHECKS : Long.MAX_VALUE
-                );
-                limit.MAX_ENTITIES = Math.max(
-                        limit.MAX_ENTITIES,
+                ));
+                limit.MAX_ENTITIES.set(Math.max(
+                        limit.MAX_ENTITIES.get(),
                         newLimit.MAX_ENTITIES != -1 ? newLimit.MAX_ENTITIES : Integer.MAX_VALUE
-                );
-                limit.MAX_FAILS = Math.max(limit.MAX_FAILS, newLimit.MAX_FAILS != -1 ? newLimit.MAX_FAILS : Integer.MAX_VALUE);
-                limit.MAX_ITERATIONS = Math.max(
-                        limit.MAX_ITERATIONS, newLimit.MAX_ITERATIONS != -1 ? newLimit.MAX_ITERATIONS : Integer.MAX_VALUE);
-                limit.MAX_RADIUS = Math.max(
-                        limit.MAX_RADIUS,
-                        newLimit.MAX_RADIUS != -1 ? newLimit.MAX_RADIUS : Integer.MAX_VALUE
-                );
+                ));
+                limit.MAX_FAILS.set(Math.max(
+                        limit.MAX_FAILS.get(),
+                        newLimit.MAX_FAILS != -1 ? newLimit.MAX_FAILS : Integer.MAX_VALUE
+                ));
+                limit.MAX_ITERATIONS.set(Math.max(
+                        limit.MAX_ITERATIONS.get(),
+                        newLimit.MAX_ITERATIONS != -1 ? newLimit.MAX_ITERATIONS : Integer.MAX_VALUE
+                ));
+                limit.MAX_RADIUS = Math.max(limit.MAX_RADIUS, newLimit.MAX_RADIUS != -1 ? newLimit.MAX_RADIUS : Integer.MAX_VALUE);
                 limit.MAX_SUPER_PICKAXE_SIZE = Math.max(
                         limit.MAX_SUPER_PICKAXE_SIZE,
                         newLimit.MAX_SUPER_PICKAXE_SIZE != -1 ? newLimit.MAX_SUPER_PICKAXE_SIZE : Integer.MAX_VALUE
@@ -623,6 +625,13 @@ public class Settings extends Config {
     public static class EXPERIMENTAL {
 
         @Comment({
+                "Undo operation batch size",
+                " - The size defines the number of changes read at once.",
+                " - Larger numbers might reduce overhead but increase latency for edits with only few changes.",
+                " - 0 means undo operations are not batched."})
+        public int UNDO_BATCH_SIZE = 128;
+
+        @Comment({
                 "[UNSAFE] Directly modify the region files. (OBSOLETE - USE ANVIL COMMANDS)",
                 " - IMPROPER USE CAN CAUSE WORLD CORRUPTION!",
         })
@@ -667,6 +676,11 @@ public class Settings extends Config {
                 "Changes due to fluid flow will not be tracked by history, thus may have unintended consequences"
         })
         public boolean ALLOW_TICK_FLUIDS = false;
+
+        @Comment({
+                "Whether FAWE should use the incubator Vector API to accelerate some operations"
+        })
+        public boolean USE_VECTOR_API = false;
 
     }
 
